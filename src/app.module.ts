@@ -3,7 +3,6 @@ import { CategoriesTreeModule } from './categories-tree/categories-tree.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { join } from 'path';
-import { CategoriesTreeEntity } from './categories-tree/entity/categories-tree.entity';
 
 
 @Module({

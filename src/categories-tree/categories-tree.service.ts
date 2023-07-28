@@ -1,14 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { EntityManager, Repository } from 'typeorm';
-import { join } from 'path';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoriesTreeEntity } from 'src/categories-tree/entity/categories-tree.entity';
 
 @Injectable()
 export class CategoriesTreeService {
   constructor(
-    private readonly configService: ConfigService,
     @InjectRepository(CategoriesTreeEntity)
     private readonly categoriesTreeRepository: Repository<CategoriesTreeEntity>,
     private readonly entityManager: EntityManager,

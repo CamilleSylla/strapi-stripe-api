@@ -1,4 +1,4 @@
-import { Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { CategoriesTreeService } from './categories-tree.service';
 
 @Controller('categories-tree')
@@ -7,6 +7,7 @@ export class CategoriesTreeController {
 
   @Post('/webhook/build')
   async buildTree() {
+
     const categories = await this.categoriesTreeService.getCategories();
     const tree = this.categoriesTreeService.buildCategoryTree(categories);
     const exist = (await this.categoriesTreeService.find()).filter(categoryTree => {
