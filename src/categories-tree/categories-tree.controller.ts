@@ -1,5 +1,6 @@
-import { Req, Controller, Post, Logger } from '@nestjs/common';
+import { Controller, Post, Logger, UseGuards } from '@nestjs/common';
 import { CategoriesTreeService } from './categories-tree.service';
+import { StrapiApiGuard } from 'src/auth/guards/strapi-api.guard';
 
 @Controller('categories-tree')
 export class CategoriesTreeController {
@@ -7,10 +8,11 @@ export class CategoriesTreeController {
   constructor(private readonly categoriesTreeService: CategoriesTreeService) {}
 
   @Post('/webhook/build')
+  @UseGuards(StrapiApiGuard)
   async buildTree() {
     try {
-      const categories = await this.categoriesTreeService.getCategories();      
-      const tree = this.categoriesTreeService.buildCategoryTree(categories);      
+      const categories = await this.categoriesTreeService.getCategories();
+      const tree = this.categoriesTreeService.buildCategoryTree(categories);
       const exist = (await this.categoriesTreeService.find()).filter(
         (categoryTree) => {
           return categoryTree.id === 1;
