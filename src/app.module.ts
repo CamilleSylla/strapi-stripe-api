@@ -3,8 +3,6 @@ import { CategoriesTreeModule } from './categories-tree/categories-tree.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { join } from 'path';
-import { CategoriesTreeEntity } from './categories-tree/entity/categories-tree.entity';
-
 
 @Module({
   imports: [
@@ -16,7 +14,7 @@ import { CategoriesTreeEntity } from './categories-tree/entity/categories-tree.e
       username: process.env.DATABASE_USERNAME,
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE_NAME,
-      entities: [ join(__dirname, '**', '*.entity.{ts,js}')],
+      entities: [join(__dirname, '**', '*.entity.{ts,js}')],
       autoLoadEntities: true,
       synchronize: true,
     }),
