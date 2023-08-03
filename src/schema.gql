@@ -1,0 +1,22 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type PaymentIntentOutput {
+  id: String!
+  object: String!
+  amount: Int!
+  amount_capturable: String!
+  statement_descriptor: String
+  statement_descriptor_suffix: String
+  status: String!
+  transfer_group: String
+}
+
+type Query {
+  sayHello: String!
+}
+
+type Mutation {
+  createPaymentIntent(productIds: [String!]!): PaymentIntentOutput!
+}

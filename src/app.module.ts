@@ -3,6 +3,10 @@ import { CategoriesTreeModule } from './categories-tree/categories-tree.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { join } from 'path';
+import { StripeModule } from './stripe/stripe.module';
+import { PaymentModule } from './payment/payment.module';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 
 @Module({
   imports: [
@@ -18,7 +22,16 @@ import { join } from 'path';
       autoLoadEntities: true,
       synchronize: true,
     }),
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      include: [PaymentModule],
+      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+    }),
+    StripeModule.forRoot(process.env.STRIPE_SK, {
+      apiVersion: '2022-11-15',
+    }),
     CategoriesTreeModule,
+    PaymentModule,
   ],
 })
 export class AppModule {}
