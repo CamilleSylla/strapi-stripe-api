@@ -22,11 +22,14 @@ export class PaymentService {
     const prices = await this.getStripeProductPricesAmount(stripeProduct);
     const amount = prices.reduce((acc, cur) => acc + cur.unit_amount, 0);
     this.logger.log(`Creating payment intent, amount ${amount / 100}€`);
-    return await this.stripe.paymentIntents.create({
+    const paymentIntent = await this.stripe.paymentIntents.create({
       amount,
       currency: 'eur',
       automatic_payment_methods: { enabled: true },
     });
+    return {
+      client_secret: paymentIntent.client_secret,
+    };
   }
 
   private async getStripeProductPricesAmount(

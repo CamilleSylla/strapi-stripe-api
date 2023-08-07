@@ -2,15 +2,8 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type PaymentIntentOutput {
-  id: String!
-  object: String!
-  amount: Int!
-  amount_capturable: String!
-  statement_descriptor: String
-  statement_descriptor_suffix: String
-  status: String!
-  transfer_group: String
+type CreatePaymentIntent {
+  client_secret: String!
 }
 
 type Query {
@@ -18,5 +11,5 @@ type Query {
 }
 
 type Mutation {
-  createPaymentIntent(productIds: [String!]!): PaymentIntentOutput!
+  createPaymentIntent(productIds: [String!]!): CreatePaymentIntent!
 }

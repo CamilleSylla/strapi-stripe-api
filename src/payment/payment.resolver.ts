@@ -1,6 +1,7 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { PaymentIntentOutput } from './output/payment-intent.output';
 import { PaymentService } from './payment.service';
+import { CreatePaymentIntent } from './output/create-payment-intent.output';
 
 @Resolver(() => PaymentIntentOutput)
 export class PaymentResolver {
@@ -11,7 +12,7 @@ export class PaymentResolver {
     return 'Hello World!';
   }
 
-  @Mutation(() => PaymentIntentOutput)
+  @Mutation(() => CreatePaymentIntent)
   async createPaymentIntent(
     @Args('productIds', { type: () => [String] }) productIds: string[],
   ) {
