@@ -1,0 +1,15 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type CreatePaymentIntent {
+  client_secret: String!
+}
+
+type Query {
+  sayHello: String!
+}
+
+type Mutation {
+  createPaymentIntent(productIds: [String!]!): CreatePaymentIntent!
+}
