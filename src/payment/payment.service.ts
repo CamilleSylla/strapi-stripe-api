@@ -23,7 +23,11 @@ export class PaymentService {
       const slugs = products.map((product) => product.slug);
       const stripeProducts = await this.getStrapiProductPricesIds(slugs);
       const prices = await this.getStripeProductPricesAmount(stripeProducts);
-      const amount = prices.reduce((acc, cur) => acc + cur.unit_amount, 0);
+      const amount = prices.reduce((acc, cur) => {
+        const { quantity } = products.find((el) => el.slug === cur.Slug);
+        const price = cur.unit_amount * quantity;
+        return acc + price;
+      }, 0);
       this.logger.log(`Creating payment intent, amount ${amount / 100}€`);
       const paymentIntent = await this.stripe.paymentIntents.create({
         amount,
@@ -39,7 +43,7 @@ export class PaymentService {
   }
 
   private async getStripeProductPricesAmount(
-    products: { stripe_id: string; price_id: string }[],
+    products: { stripe_id: string; price_id: string; Slug: string }[],
   ) {
     return await Promise.all(
       products.map(async (product) => {
@@ -77,8 +81,11 @@ export class PaymentService {
       );
       const {
         data,
-      }: { data: { attributes: { stripe_id: string; price_id: string } }[] } =
-        await fetchStrapiProducts.json();
+      }: {
+        data: {
+          attributes: { stripe_id: string; price_id: string; Slug: string };
+        }[];
+      } = await fetchStrapiProducts.json();
       if (data.length !== slugs.length) {
         throw new BadRequestException('no products found');
       }
@@ -87,6 +94,7 @@ export class PaymentService {
         return {
           price_id: product.attributes.price_id,
           stripe_id: product.attributes.stripe_id,
+          Slug: product.attributes.Slug,
         };
       });
     } catch (error) {
