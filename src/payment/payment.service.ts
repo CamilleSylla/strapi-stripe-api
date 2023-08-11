@@ -9,6 +9,7 @@ import { STRIPE_CLIENT } from 'src/stripe/constants';
 import fetch from 'node-fetch';
 import Stripe from 'stripe';
 import * as qs from 'qs';
+import { CreatePaymentIntentInputs } from './inputs/create-payment-intent.input';
 
 @Injectable()
 export class PaymentService {
@@ -17,19 +18,24 @@ export class PaymentService {
     @Inject(STRIPE_CLIENT) private readonly stripe: Stripe,
     private readonly config: ConfigService,
   ) {}
-  async createPaymentIntent(productIds: string[]) {
-    const stripeProduct = await this.getStrapiProductPricesIds(productIds);
-    const prices = await this.getStripeProductPricesAmount(stripeProduct);
-    const amount = prices.reduce((acc, cur) => acc + cur.unit_amount, 0);
-    this.logger.log(`Creating payment intent, amount ${amount / 100}€`);
-    const paymentIntent = await this.stripe.paymentIntents.create({
-      amount,
-      currency: 'eur',
-      automatic_payment_methods: { enabled: true },
-    });
-    return {
-      client_secret: paymentIntent.client_secret,
-    };
+  async createPaymentIntent(products: CreatePaymentIntentInputs[]) {
+    try {
+      const slugs = products.map((product) => product.slug);
+      const stripeProducts = await this.getStrapiProductPricesIds(slugs);
+      const prices = await this.getStripeProductPricesAmount(stripeProducts);
+      const amount = prices.reduce((acc, cur) => acc + cur.unit_amount, 0);
+      this.logger.log(`Creating payment intent, amount ${amount / 100}€`);
+      const paymentIntent = await this.stripe.paymentIntents.create({
+        amount,
+        currency: 'eur',
+        automatic_payment_methods: { enabled: true },
+      });
+      return {
+        client_secret: paymentIntent.client_secret,
+      };
+    } catch (error) {
+      throw error;
+    }
   }
 
   private async getStripeProductPricesAmount(
@@ -44,12 +50,12 @@ export class PaymentService {
     );
   }
 
-  private async getStrapiProductPricesIds(ids: string[]) {
+  private async getStrapiProductPricesIds(slugs: string[]) {
     const query = qs.stringify(
       {
         filters: {
-          id: {
-            $in: ids,
+          Slug: {
+            $in: slugs,
           },
         },
       },
@@ -59,7 +65,7 @@ export class PaymentService {
     );
     try {
       this.logger.log(
-        `Get product informations from strapi for ${ids.join(', ')}`,
+        `Get product informations from strapi for ${slugs.join(', ')}`,
       );
       const fetchStrapiProducts = await fetch(
         `${this.config.get('STRAPI_BASE_URL')}/api/products?${query}`,
@@ -73,7 +79,7 @@ export class PaymentService {
         data,
       }: { data: { attributes: { stripe_id: string; price_id: string } }[] } =
         await fetchStrapiProducts.json();
-      if (data.length !== ids.length) {
+      if (data.length !== slugs.length) {
         throw new BadRequestException('no products found');
       }
 

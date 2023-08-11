@@ -11,5 +11,10 @@ type Query {
 }
 
 type Mutation {
-  createPaymentIntent(productIds: [String!]!): CreatePaymentIntent!
+  createPaymentIntent(products: [CreatePaymentIntentInputs!]!): CreatePaymentIntent!
+}
+
+input CreatePaymentIntentInputs {
+  slug: String!
+  quantity: Float!
 }
