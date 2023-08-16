@@ -4,6 +4,7 @@
 
 type CreatePaymentIntent {
   client_secret: String!
+  id: String!
 }
 
 type Query {
@@ -12,9 +13,19 @@ type Query {
 
 type Mutation {
   createPaymentIntent(products: [CreatePaymentIntentInputs!]!): CreatePaymentIntent!
+  updatePaymentIntentShipping(infos: UpdatePaymentIntentShippingInput!, client_secret: String!): CreatePaymentIntent!
 }
 
 input CreatePaymentIntentInputs {
   slug: String!
   quantity: Float!
+}
+
+input UpdatePaymentIntentShippingInput {
+  street: String!
+  city: String!
+  zip: String!
+  country: String!
+  name: String!
+  phone: String
 }

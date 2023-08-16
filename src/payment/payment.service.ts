@@ -10,6 +10,7 @@ import fetch from 'node-fetch';
 import Stripe from 'stripe';
 import * as qs from 'qs';
 import { CreatePaymentIntentInputs } from './inputs/create-payment-intent.input';
+import { UpdatePaymentIntentShippingInput } from './inputs/update-payment-intent.input';
 
 @Injectable()
 export class PaymentService {
@@ -35,11 +36,30 @@ export class PaymentService {
         automatic_payment_methods: { enabled: true },
       });
       return {
+        id: paymentIntent.id,
         client_secret: paymentIntent.client_secret,
       };
     } catch (error) {
       throw error;
     }
+  }
+
+  async updatePaymentIntentShipping(
+    infos: UpdatePaymentIntentShippingInput,
+    client_secret: string,
+  ) {
+    return await this.stripe.paymentIntents.update(client_secret, {
+      shipping: {
+        address: {
+          line1: infos.street,
+          country: infos.country,
+          city: infos.city,
+          postal_code: infos.zip,
+        },
+        name: infos.name,
+        ...(infos.phone && { phone: infos.phone }),
+      },
+    });
   }
 
   private async getStripeProductPricesAmount(

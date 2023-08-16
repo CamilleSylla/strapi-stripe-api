@@ -4,4 +4,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 export class CreatePaymentIntent {
   @Field(() => String)
   client_secret: string;
+
+  @Field(() => String)
+  id: string;
 }
